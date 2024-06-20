@@ -1,0 +1,6 @@
+[submodule "bootloader/objconv"]
+	path = bootloader/objconv
+	url = https://github.com/vertis/objconv.git
+[submodule "bootloader/grub"]
+	path = bootloader/grub
+	url = git://git.savannah.gnu.org/grub.git
