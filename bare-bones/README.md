@@ -72,3 +72,45 @@ Note that this function does not return, since there is no operating system to r
 ```console
 i686-elf-as bare-bones/boot.s -o bare-bones/build/boot.o
 ```
+
+## `vgaTerminalDriver.cc`
+
+A simple driver that prints strings to the screen. This is a basic VGA text mode driver that writes to the text buffer directly. See [VGA Text Mode](https://en.wikipedia.org/wiki/VGA_text_mode) for more information.
+
+### Building the Terminal Driver
+
+```console
+i686-elf-g++ -c bare-bones/vgaTerminalDriver.cc -o bare-bones/build/vgaTerminalDriver.o -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti
+```
+
+## `kernel.cc`
+
+The main kernel file that defines the `kernel_main` function. This function initializes the VGA terminal driver and prints a message to the screen.
+
+### Building the Kernel
+
+```console
+i686-elf-g++ -c bare-bones/vgaTerminalDriver.cc -o bare-bones/build/vgaTerminalDriver.o -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti
+```
+
+## `linker.ld`
+
+A linker script that defines the layout of the kernel binary.
+
+### Linking
+
+```console
+i686-elf-gcc -T bare-bones/linker.ld -o bare-bones/build/boneos.bin -ffreestanding -O2 -nostdlib bare-bones/build/boot.o bare-bones/build/kernel.o bare-bones/build/vgaTerminalDriver.o -lgcc
+```
+
+## Examining the Binary
+
+```console
+objdump -D boneos.bin --demangle
+```
+
+## Check for Multiboot Header
+
+```console
+artifacts/bin/grub-file --is-x86-multiboot bare-bones/build/boneos.bin
+```
