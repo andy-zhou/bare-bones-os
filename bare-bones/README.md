@@ -133,3 +133,15 @@ cp bare-bones/build/boneos.bin bare-bones/build/image/boot/boneos.bin
 cp bare-bones/grub.cfg bare-bones/build/image/boot/grub/grub.cfg
 ./artifacts/bin/grub-mkrescue -o bare-bones/build/boneos.iso bare-bones/build/image
 ```
+
+### Running the Kernel
+
+```console
+qemu-system-i386 -cdrom bare-bones/build/boneos.iso
+```
+
+Alternatively, you can run the kernel directly with QEMU:
+
+```console
+qemu-system-i386 -kernel bare-bones/build/boneos.bin
+```
