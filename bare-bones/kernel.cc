@@ -19,6 +19,6 @@ namespace
 
 extern "C" void kernel_main()
 {
-  VGATerminalDriver terminalDriver(SCREEN_WIDTH, SCREEN_HEIGHT);
+  VGATerminalDriver terminalDriver(SCREEN_HEIGHT, SCREEN_WIDTH);
   terminalDriver.writeString("Hello\nWorld!");
 }

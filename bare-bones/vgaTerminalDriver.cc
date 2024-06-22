@@ -32,7 +32,7 @@ VGATerminalDriver::VGATerminalDriver(size_t rows, size_t columns)
 
 void VGATerminalDriver::putEntryAt(char character, uint8_t color, Coordinate coordinate)
 {
-  const auto index = coordinate.row + coordinate.column * this->rows;
+  const auto index = coordinate.column + coordinate.row * this->columns;
   const auto entry = vgaEntry(character, color);
   this->textBuffer[index] = entry;
 };
@@ -57,7 +57,15 @@ void VGATerminalDriver::advanceCursorLine()
 
 void VGATerminalDriver::putChar(char character)
 {
-  this->putEntryAt(character, this->color, this->cursor);
+  if (character == '\n')
+  {
+    this->advanceCursorLine();
+  }
+  else
+  {
+    this->putEntryAt(character, this->color, this->cursor);
+    this->advanceCursor();
+  }
 }
 
 void VGATerminalDriver::writeString(const char *data)
@@ -66,14 +74,6 @@ void VGATerminalDriver::writeString(const char *data)
   for (size_t i = 0; i < length; ++i)
   {
     this->putChar(data[i]);
-    if (data[i] == '\n')
-    {
-      this->advanceCursorLine();
-    }
-    else
-    {
-      this->advanceCursor();
-    }
   }
 }
 
