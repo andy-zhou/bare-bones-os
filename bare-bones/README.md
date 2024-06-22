@@ -67,35 +67,45 @@ Note that this function does not return, since there is no operating system to r
 2. Halt the CPU until the next interrupt. Because maskable interrupts are disabled, this will halt the CPU indefinitely or until a non-maskable interrupt occurs.
 3. If a non-maskable interrupt occurs, jump back to the halt instruction.
 
+## `vgaTerminalDriver.cc`
+
+A simple driver that prints strings to the screen. This is a basic VGA text mode driver that writes to the text buffer directly. See [VGA Text Mode](https://en.wikipedia.org/wiki/VGA_text_mode) for more information.
+
+## `kernel.cc`
+
+The main kernel file that defines the `kernel_main` function. This function initializes the VGA terminal driver and prints a message to the screen.
+
+## `linker.ld`
+
+A linker script that defines the layout of the kernel binary.
+
+## `grub.cfg`
+
+See [GRUB Configuration](https://www.gnu.org/software/grub/manual/grub/grub.html#Configuration).
+
+## Building the Kernel
+
+Here are the steps to build the kernel:
+
 ### Assembling
 
 ```console
 i686-elf-as bare-bones/boot.s -o bare-bones/build/boot.o
 ```
 
-## `vgaTerminalDriver.cc`
+### Compiling
 
-A simple driver that prints strings to the screen. This is a basic VGA text mode driver that writes to the text buffer directly. See [VGA Text Mode](https://en.wikipedia.org/wiki/VGA_text_mode) for more information.
-
-### Building the Terminal Driver
+#### VGA Terminal Driver
 
 ```console
 i686-elf-g++ -c bare-bones/vgaTerminalDriver.cc -o bare-bones/build/vgaTerminalDriver.o -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti
 ```
 
-## `kernel.cc`
-
-The main kernel file that defines the `kernel_main` function. This function initializes the VGA terminal driver and prints a message to the screen.
-
-### Building the Kernel
+#### Kernel
 
 ```console
 i686-elf-g++ -c bare-bones/vgaTerminalDriver.cc -o bare-bones/build/vgaTerminalDriver.o -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti
 ```
-
-## `linker.ld`
-
-A linker script that defines the layout of the kernel binary.
 
 ### Linking
 
@@ -103,14 +113,23 @@ A linker script that defines the layout of the kernel binary.
 i686-elf-gcc -T bare-bones/linker.ld -o bare-bones/build/boneos.bin -ffreestanding -O2 -nostdlib bare-bones/build/boot.o bare-bones/build/kernel.o bare-bones/build/vgaTerminalDriver.o -lgcc
 ```
 
-## Examining the Binary
+### Examining the Binary
 
 ```console
 objdump -D boneos.bin --demangle
 ```
 
-## Check for Multiboot Header
+### Check for Multiboot Header
 
 ```console
 artifacts/bin/grub-file --is-x86-multiboot bare-bones/build/boneos.bin
+```
+
+### Building the ISO
+
+```console
+mkdir -p bare-bones/build/image/boot/grub
+cp bare-bones/build/boneos.bin bare-bones/build/image/boot/boneos.bin
+cp bare-bones/grub.cfg bare-bones/build/image/boot/grub/grub.cfg
+./artifacts/bin/grub-mkrescue -o bare-bones/build/boneos.iso bare-bones/build/image
 ```
